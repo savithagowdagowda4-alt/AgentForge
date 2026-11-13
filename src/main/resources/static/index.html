@@ -44,6 +44,7 @@
     <form id="authForm" class="stack">
       <label>Username<input name="username" autocomplete="username" required minlength="3"></label>
       <label class="reg-only hidden">Display name<input name="displayName" autocomplete="name"></label>
+      <label class="invite-only hidden">Invite code<input name="inviteCode" autocomplete="off" placeholder="Ask the owner of this AgentForge for the code"></label>
       <label>Password<input name="password" type="password" autocomplete="current-password" required minlength="6"></label>
       <div id="authError" class="error-text"></div>
       <button class="btn primary" type="submit" id="authSubmit" style="justify-content:center;padding:14px">Sign in →</button>

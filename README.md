@@ -63,3 +63,18 @@ Data is stored in an embedded H2 database under `./data`.
 ## Learning the app
 
 Click **▶ Tutorial** in the top bar, or **Help & Tutorial** in the sidebar. A narrated walkthrough plays inside the app like a video: the cursor moves and clicks, each feature is spotlighted and explained, and a voice reads the captions aloud. There are 16 chapters. Controls: Space to pause, ← → to skip, Esc to exit, ☰ to choose a chapter, and 1×/1.5×/2× for speed. The Help page also lists written steps for every feature, with a ▶ Watch button for each chapter.
+
+## Deploy to the cloud (Render)
+
+The repo includes a `Dockerfile` (Java 21 with Tesseract OCR) and a `render.yaml` blueprint.
+
+1. Sign in at https://render.com with GitHub.
+2. Click **New +** → **Blueprint**, pick this repository, and click **Apply**.
+3. When asked, fill in:
+   - `AGENTFORGE_SIGNUP_CODE`: a secret invite code. Only people with this code can create accounts. Strongly recommended for a public URL.
+   - `ANTHROPIC_API_KEY`: optional. Enables Claude. Anyone who signs up uses your key, which costs you money.
+4. Wait for the build (about 5–10 minutes the first time), then open the `https://agentforge-xxxx.onrender.com` URL.
+
+On the free plan the app sleeps after 15 minutes without visitors (the first visit then takes about a minute), and data is reset on every deploy. To keep data, use a paid plan and the `disk:` block in `render.yaml`.
+
+Other settings: `AGENTFORGE_DATA_DIR` (data folder), `AGENTFORGE_MODEL`, `AGENTFORGE_EFFORT`, `AGENTFORGE_GEO=false` (turns off maps and geocoding), `PORT`.

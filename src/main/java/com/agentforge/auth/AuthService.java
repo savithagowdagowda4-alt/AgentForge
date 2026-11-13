@@ -17,10 +17,25 @@ import java.util.Map;
 public class AuthService {
     private static final int ITERATIONS = 120_000;
     private final Db db;
+    private final String signupCode;
     private final SecureRandom random = new SecureRandom();
 
-    public AuthService(Db db) {
+    public AuthService(Db db, @org.springframework.beans.factory.annotation.Value("${agentforge.signup-code:}") String signupCode) {
         this.db = db;
+        this.signupCode = signupCode == null ? "" : signupCode.trim();
+    }
+
+    /** True when the deployment requires an invite code to create accounts. */
+    public boolean signupCodeRequired() {
+        return !signupCode.isEmpty();
+    }
+
+    /** Rejects registration unless the invite code matches (no-op when no code is configured). */
+    public void checkSignupCode(String provided) {
+        if (signupCode.isEmpty()) return;
+        String p = provided == null ? "" : provided.trim();
+        if (!MessageDigest.isEqual(signupCode.getBytes(), p.getBytes()))
+            throw new ApiException(HttpStatus.FORBIDDEN, "A valid invite code is required to create an account");
     }
 
     public Map<String, Object> register(String username, String password, String displayName) {

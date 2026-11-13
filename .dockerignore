@@ -1,0 +1,7 @@
+target/
+data/
+.home/
+.tools/
+.git/
+.claude/
+*.log

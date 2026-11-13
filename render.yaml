@@ -1,0 +1,22 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# In Render: New + -> Blueprint -> pick this GitHub repo. Render asks for the secret values below.
+services:
+  - type: web
+    name: agentforge
+    runtime: docker
+    plan: free            # free: sleeps after 15 min idle, and data resets on each deploy (no disk)
+    region: singapore     # closest Render region to India; change if your users are elsewhere
+    healthCheckPath: /api/status
+    autoDeploy: true      # every push to main redeploys
+    envVars:
+      - key: ANTHROPIC_API_KEY        # optional: enables Claude reasoning + vision
+        sync: false
+      - key: AGENTFORGE_SIGNUP_CODE   # recommended: only people with this code can create accounts
+        sync: false
+      - key: AGENTFORGE_MODEL
+        value: claude-opus-5-5
+    # To keep data across deploys, switch to a paid plan (e.g. "starter") and uncomment:
+    # disk:
+    #   name: agentforge-data
+    #   mountPath: /app/data
+    #   sizeGB: 1

@@ -19,6 +19,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody Map<String, String> body, HttpServletRequest req) {
+        auth.checkSignupCode(body.get("inviteCode"));
         Map<String, Object> user = auth.register(body.get("username"), body.get("password"), body.get("displayName"));
         startSession(req, user);
         return user;
@@ -36,6 +37,11 @@ public class AuthController {
         HttpSession s = req.getSession(false);
         if (s != null) s.invalidate();
         return Map.of("ok", true);
+    }
+
+    @GetMapping("/config")
+    public Map<String, Object> config() {
+        return Map.of("inviteCodeRequired", auth.signupCodeRequired());
     }
 
     @GetMapping("/me")

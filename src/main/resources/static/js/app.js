@@ -74,11 +74,14 @@ let li = 0;
 
 // ------------------------------------------------------------- auth
 let authMode = 'login';
+let inviteRequired = false;
+api('/auth/config').then((c) => { inviteRequired = !!c.inviteCodeRequired; }).catch(() => {});
 $('authTabs').addEventListener('click', (e) => {
   const b = e.target.closest('[data-mode]'); if (!b) return;
   authMode = b.dataset.mode;
   document.querySelectorAll('#authTabs .tab').forEach((t) => t.classList.toggle('active', t === b));
   document.querySelectorAll('.reg-only').forEach((el) => el.classList.toggle('hidden', authMode !== 'register'));
+  document.querySelectorAll('.invite-only').forEach((el) => el.classList.toggle('hidden', authMode !== 'register' || !inviteRequired));
   $('authSubmit').textContent = authMode === 'login' ? 'Sign in →' : 'Create account →';
   $('authForm').password.autocomplete = authMode === 'login' ? 'current-password' : 'new-password';
 });
@@ -87,7 +90,7 @@ $('authForm').addEventListener('submit', async (e) => {
   const f = e.target; $('authError').textContent = '';
   $('authSubmit').disabled = true;
   try {
-    const body = { username: f.username.value, password: f.password.value, displayName: f.displayName.value };
+    const body = { username: f.username.value, password: f.password.value, displayName: f.displayName.value, inviteCode: f.inviteCode.value };
     state.user = await api('/auth/' + authMode, { method: 'POST', body });
     f.password.value = '';
     enterApp();
