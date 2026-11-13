@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05060f">
+  <title>AgentForge</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='.5' stop-color='%23a855f7'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><polygon points='16,2 29,9.5 29,22.5 16,30 3,22.5 3,9.5' fill='url(%23g)'/><circle cx='16' cy='16' r='5' fill='white'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="css/app.css?v=3">
+</head>
+<body>
+<canvas id="wallpaper" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+
+<div id="auth" class="auth hidden">
+  <section class="hero">
+    <span class="eyebrow">Multi-agent decision intelligence</span>
+    <h1 class="hero-title">Six minds.<br><span class="accent">One decision</span><br>you can trust.</h1>
+    <p class="hero-sub">AgentForge puts a team of AI agents on your problem. They analyse your words, voice and evidence, argue with each other, and show every step of their reasoning.</p>
+    <div class="typer" id="typer"></div>
+    <div class="hero-orb" aria-hidden="true">
+      <div class="orb-ring"></div><div class="orb-ring r2"></div>
+      <div class="orb-core"></div>
+      <div class="orb-orbit" id="orbOrbit"></div>
+    </div>
+    <div class="hero-stats">
+      <div><b>6</b><span>specialist agents</span></div>
+      <div><b>Live</b><span>event streaming</span></div>
+      <div><b>100%</b><span>traceable reasoning</span></div>
+    </div>
+  </section>
+  <div class="auth-card">
+    <div class="brand big"><span class="logo"></span>AgentForge</div>
+    <p class="muted">Sign in to your command center.</p>
+    <div class="tabs small" id="authTabs">
+      <button class="tab active" data-mode="login">Sign in</button>
+      <button class="tab" data-mode="register">Create account</button>
+    </div>
+    <form id="authForm" class="stack">
+      <label>Username<input name="username" autocomplete="username" required minlength="3"></label>
+      <label class="reg-only hidden">Display name<input name="displayName" autocomplete="name"></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required minlength="6"></label>
+      <div id="authError" class="error-text"></div>
+      <button class="btn primary" type="submit" id="authSubmit" style="justify-content:center;padding:14px">Sign in →</button>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#/dashboard"><span class="logo"></span><span>AgentForge</span></a>
+    <nav class="nav">
+      <div class="nav-label">Workspace</div>
+      <a href="#/dashboard" data-nav="dashboard"><i class="ico">◈</i>Command Center</a>
+      <a href="#/new" data-nav="new"><i class="ico">✚</i>New Analysis</a>
+      <a href="#/conflicts" data-nav="conflicts"><i class="ico">⚔</i>Conflict Center</a>
+      <a href="#/memory" data-nav="memory"><i class="ico">⬡</i>Memory Vault</a>
+      <a href="#/insights" data-nav="insights"><i class="ico">▤</i>Insights</a>
+      <div class="nav-label" style="margin-top:14px">System</div>
+      <a href="#/status" data-nav="status"><i class="ico">◎</i>Services</a>
+      <a href="#/help" data-nav="help"><i class="ico">?</i>Help &amp; Tutorial</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="sys-card">
+        <div class="row between"><span class="faint mono">AGENT GRID</span><span id="sysEngine" class="mono" style="color:#c4b5fd">—</span></div>
+        <div class="bar"><i></i></div>
+      </div>
+      <button class="btn ghost small" id="shortcutsBtn" title="Keyboard shortcuts (?)">⌨ Shortcuts</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="btn ghost icon only-mobile" id="menuBtn" aria-label="Menu">☰</button>
+      <form class="search" id="searchForm" role="search">
+        <input id="searchInput" placeholder="Search…   /      ·   Ctrl K  command palette" aria-label="Global search">
+      </form>
+      <span class="grow"></span>
+      <button class="btn small tutorial-btn" id="tutorialBtn" title="Watch the narrated tutorial">▶ Tutorial</button>
+      <span id="clock"></span>
+      <span id="engineBadge" class="badge"></span>
+      <button class="btn ghost icon motion-toggle" id="motionBtn" title="Toggle live wallpaper" aria-label="Toggle live wallpaper">✦</button>
+      <div class="notif">
+        <button class="btn ghost icon" id="bellBtn" aria-label="Notifications">🔔<span id="bellCount" class="count hidden">0</span></button>
+        <div class="dropdown hidden" id="notifPanel"></div>
+      </div>
+      <div class="user">
+        <button class="btn small" id="userBtn"></button>
+        <div class="dropdown hidden" id="userMenu"><button class="menu-item" id="logoutBtn">Sign out</button></div>
+      </div>
+    </header>
+    <main id="view" class="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card" id="modalCard"></div></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module" src="js/app.js?v=3"></script>
+</body>
+</html>
